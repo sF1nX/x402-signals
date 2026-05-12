@@ -1,4 +1,9 @@
-# x402-signals
+# x402-signals (mirror inside x402_1 monorepo)
+
+> **Canonical home:** [github.com/sF1nX/x402-signals](https://github.com/sF1nX/x402-signals).
+> Issues, comments, and pull requests go there. The files in this
+> directory are a mirror inside the private monorepo — convenient for
+> local cross-references; not the primary publication channel.
 
 A small, machine-readable convention for x402 services to declare
 **fulfillment SLA**, **refund policy**, and **operational signals** so
@@ -7,6 +12,8 @@ human intervention.
 
 | Document | Status | Last updated |
 |---|---|---|
+| [v0.2.md](v0.2.md) — full v0.2 DRAFT | DRAFT | 2026-05-12 |
+| [v0.2-outline.md](v0.2-outline.md) — integration plan | DRAFT OUTLINE | 2026-05-12 |
 | [v0.1.md](v0.1.md) — full v0.1 DRAFT | DRAFT | 2026-05-08 |
 | [x402-profile.md](x402-profile.md) — x402-specific bindings | placeholder | 2026-05-08 |
 
@@ -25,14 +32,19 @@ challenge `extensions["x402-signals"]` block):
     "retry_after_seconds": 5
   },
   "refund_policy": {
-    "type": "automatic",
-    "triggers": ["fulfillment_failed", "upstream_timeout"],
+    "type": "none",
     "refund_to": "original_payer",
     "refund_endpoint": "/api/refunds",
     "refund_deadline_seconds": 86400,
     "refund_claim_deadline_seconds": null,
     "partial_refunds_supported": true,
-    "idempotency_required": true
+    "idempotency_required": true,
+    "refund_policy_by_state": {
+      "FULFILLMENT_FAILED": {
+        "type": "automatic",
+        "triggers": ["fulfillment_failed", "upstream_timeout"]
+      }
+    }
   },
   "signals": {
     "provider_health": "healthy",
@@ -53,9 +65,9 @@ responses can be recovered:
 ```
 
 That's it. No new wire envelope, no required transport, no fee. Read
-[v0.1.md](v0.1.md) for the canonical state machine, field-by-field
+[v0.2.md](v0.2.md) for the canonical state machine, field-by-field
 semantics, status / refund endpoint contracts, security considerations,
-and a worked reference example against a real on-chain eSIM purchase.
+and worked examples from the first public field implementation report.
 
 ## Why
 
@@ -76,12 +88,10 @@ alternative wordings are welcome.
 - Mention [@x402station_io](https://x.com/x402station_io) on X.
 - Email `hello@x402station.io`.
 
-If you operate an x402 service and want to be the **first
-implementer** of v0.1 (publishing the three buckets and exposing
-matching status / refund endpoints), we will help you wire it and cite
-you explicitly in v0.2. No fee, no commitment. ReloadPI is the
-**pilot target** that triggered the draft; the first-implementer slot
-is open.
+If you operate an x402 service and want to pressure-test v0.2, file an
+issue with concrete field-shape, state-transition, or voucher/topup
+divergence examples. Redacted response bodies and public on-chain tx
+hashes are the most useful review material.
 
 ## License
 
